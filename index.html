@@ -194,6 +194,46 @@
   .perfo-badge.ok { background:rgba(0,255,157,.12); color:var(--accent2); border:1px solid rgba(0,255,157,.3); }
   .perfo-badge.nok { background:rgba(255,71,87,.12); color:var(--red); border:1px solid rgba(255,71,87,.3); }
 
+  /* ── Toggle FAS ── */
+  .fas-section { border-color:rgba(255,214,10,0.25); }
+  .fas-section .section-header { color:var(--yellow); background:linear-gradient(90deg,var(--navy3),rgba(255,214,10,0.05)); border-color:rgba(255,214,10,0.15); }
+  .fas-toggle { display:grid; grid-template-columns:1fr 1fr; padding:.65rem .8rem; gap:.55rem; }
+  .fas-btn { font-family:ui-monospace,'SF Mono','Courier New',monospace; font-size:.72rem; font-weight:700; letter-spacing:.08em; padding:.65rem .5rem; background:transparent; color:var(--muted); border:1.5px solid rgba(255,255,255,.1); border-radius:6px; cursor:pointer; transition:color .18s,background .18s,border-color .18s; -webkit-tap-highlight-color:transparent; text-transform:uppercase; }
+  .fas-btn:hover:not(.active) { color:var(--text); border-color:rgba(255,255,255,.2); }
+  .fas-btn.active { background:rgba(255,214,10,.12); color:var(--yellow); border-color:var(--yellow); }
+  .fas-hint { padding:0 1rem .65rem; font-family:ui-monospace,'SF Mono','Courier New',monospace; font-size:.62rem; color:var(--muted); letter-spacing:.04em; line-height:1.4; text-align:center; }
+
+  /* ── Ambiance sable (FAS activé) ── */
+  body, header, .tab-bar { transition: background-color .35s ease, background .35s ease, border-color .35s ease; }
+  body.fas-active {
+    background: #1c1812;
+    background-image:
+      radial-gradient(ellipse at 20% 0%, rgba(212,165,116,0.14) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 100%, rgba(184,140,90,0.09) 0%, transparent 50%);
+  }
+  body.fas-active header { background: linear-gradient(135deg, #2a241b, #3a3326); border-bottom-color: #d4a574; }
+  body.fas-active header h1 { color: #d4a574; }
+  body.fas-active .header-badge { color: #d4a574; border-color: rgba(212,165,116,0.4); }
+  body.fas-active .tab-bar { background: #2a241b; border-bottom-color: #d4a574; }
+  body.fas-active .tab-btn.active { color: #d4a574; border-bottom-color: #d4a574; background: linear-gradient(180deg,transparent,rgba(212,165,116,0.06)); }
+
+  /* Cards concernées par FAS — habillage sable quand actif */
+  .section { transition: background-color .35s ease, border-color .35s ease; }
+  .section .section-header { transition: color .35s ease, background .35s ease, border-color .35s ease; }
+  body.fas-active .hv-section,
+  body.fas-active .fas-affects {
+    background: #221c14;
+    border-color: rgba(212,165,116,0.3);
+  }
+  body.fas-active .hv-section .section-header,
+  body.fas-active .fas-affects .section-header {
+    color: #d4a574 !important;
+    background: linear-gradient(90deg, #2a241b, rgba(212,165,116,0.06)) !important;
+    border-color: rgba(212,165,116,0.2) !important;
+  }
+  body.fas-active .hv-section .hv-kp-val { color: #e0b87e; }
+  body.fas-active .fas-affects .perfo-ok { color: #b8d4a8; }
+
   /* ── Bannière mise à jour ── */
   #update-banner {
     display:none; position:fixed; bottom:1.2rem; left:50%; transform:translateX(-50%);
@@ -344,6 +384,15 @@
     </div>
   </div>
 
+  <div class="section fas-section">
+    <div class="section-header">⚙️ Configuration FAS</div>
+    <div class="fas-toggle">
+      <button class="fas-btn active" id="fas_off" onclick="setFasMode(false)">Standard</button>
+      <button class="fas-btn" id="fas_on" onclick="setFasMode(true)">FAS installés</button>
+    </div>
+    <div class="fas-hint">Affecte H/V, performances HES/DES et VZ OEI INT ci-dessous</div>
+  </div>
+
   <div class="section hv-section">
     <div class="section-header">📈 Diagramme H/V Zone 7</div>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid rgba(255,71,87,.1)">
@@ -362,7 +411,7 @@
     </div>
   </div>
 
-  <div class="section">
+  <div class="section fas-affects">
     <div class="section-header">🌡️ Performances — Masse max admissible</div>
     <div class="perfo-inputs">
       <div class="perfo-input-cell">
@@ -395,7 +444,7 @@
     </div>
   </div>
 
-  <div class="section">
+  <div class="section fas-affects">
     <div class="section-header">📐 VZ OEI INT</div>
     <div class="perfo-result-row" style="background:rgba(0,212,255,0.03)">
       <div class="perfo-result-label">Vitesse verticale monomoteur<small id="vz_bloc_label">interpolée — temp et alti du bloc ci-dessus</small></div>
@@ -824,7 +873,7 @@ const VZ_6000 = [
   [-190,-200,-210,-250,-300,-350,-400,-420,-430,-455,-500,-520,-550,-600,-650,-650],
 ];
 
-// Bloc 6400–6600 kg — altitudes jusqu'à 6000ft
+// ── Bloc 6400–6600 kg — altitudes jusqu'à 6000ft
 const VZ_ALTI_6300 = [0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000];
 const VZ_6300 = [
   [120,120,100,100,90,90,80,80,75,75,60,50,0],
@@ -838,6 +887,92 @@ const VZ_6300 = [
   [-150,-180,-215,-275,-320,-395,-420,-460,-480,-520,-580,-600,-625],
   [-250,-280,-300,-330,-380,-430,-450,-480,-500,-520,-580,-600,-625],
 ];
+
+// ── TABLES FAS ──
+const PERF_HES_FAS = [
+  [6600,6600,6600,6600,6600,6600,6600,6600,6600,6560,6500,6450,6400,6350,6290,6220,6190,6150,6030,5930,5810,5650,5470],
+  [6600,6600,6600,6600,6600,6600,6600,6600,6570,6510,6460,6400,6360,6320,6260,6200,6160,6030,5920,5820,5680,5500,5310],
+  [6600,6600,6600,6600,6600,6600,6600,6580,6530,6480,6430,6360,6320,6270,6200,6130,6020,5900,5800,5670,5500,5310,5150],
+  [6600,6600,6600,6600,6600,6600,6590,6540,6490,6440,6390,6330,6290,6200,6120,6000,5830,5720,5610,5500,5330,5160,5010],
+  [6600,6600,6600,6600,6600,6600,6550,6500,6450,6390,6340,6300,6190,6080,5920,5820,5690,5570,5440,5320,5200,5030,4870],
+  [6600,6600,6600,6600,6600,6560,6510,6450,6370,6320,6240,6100,5990,5850,5710,5600,5470,5360,5240,5130,5000,4880,4710],
+  [6600,6600,6600,6600,6570,6520,6440,6350,6250,6120,6000,5880,5750,5620,5500,5400,5270,5160,5020,4930,null,null,null],
+  [6600,6600,6600,6570,6510,6400,6280,6150,6020,5850,5770,5620,5520,5420,5310,5200,null,null,null,null,null,null,null],
+  [6600,6600,6550,6430,6300,6170,6050,5900,5800,5700,5600,null,null,null,null,null,null,null,null,null,null,null,null],
+  [6590,6450,6310,6200,6080,5910,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+];
+const PERF_DES_FAS = [
+  [6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6510,6430,6390,6270,6200,6150,6020,5830,5650,5470],
+  [6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6520,6470,6370,6290,6220,6150,6050,5870,5680,5500,5310],
+  [6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6550,6480,6390,6290,6220,6170,6030,5880,5690,5500,5310,5150],
+  [6600,6600,6600,6600,6600,6600,6600,6600,6600,6600,6570,6500,6390,6290,6220,6150,6080,5890,5700,5500,5330,5160,5010],
+  [6600,6600,6600,6600,6600,6600,6600,6600,6600,6590,6490,6400,6280,6220,6190,6090,5900,5710,5520,5330,5200,5030,4870],
+  [6600,6600,6600,6600,6600,6600,6600,6600,6580,6480,6360,6280,6180,6100,5990,5820,5710,5550,5390,5200,5050,4880,4710],
+  [6600,6600,6600,6600,6600,6600,6600,6560,6460,6350,6250,6110,6000,5900,5750,5620,5500,5390,5220,5080,4900,null,null],
+  [6600,6600,6600,6600,6600,6600,6550,6430,6320,6190,6050,5900,5800,5620,5500,5400,null,null,null,null,null,null,null],
+  [6600,6600,6600,6600,6600,6480,6300,6200,6030,5900,null,null,null,null,null,null,null,null,null,null,null,null,null],
+  [6600,6600,6600,6480,6300,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],
+];
+
+// VZ FAS — les 3 blocs partagent les mêmes altitudes (0→8000 ft)
+const VZ_ALTI_FAS = [0,500,1000,1500,2000,2500,3000,3500,4000,4500,5000,5500,6000,6500,7000,7500,8000];
+const VZ_5500_FAS = [
+  [320,320,320,320,320,320,320,320,320,320,320,290,210,180,100,50,0],
+  [320,320,320,320,320,320,320,310,300,290,250,200,150,90,20,-20,-90],
+  [320,320,320,320,320,320,320,300,260,205,160,100,50,0,-50,-100,-120],
+  [320,320,320,320,320,320,280,230,195,120,90,20,-10,-100,-140,-180,-210],
+  [320,320,320,310,300,250,200,150,80,30,-5,-40,-100,-180,-205,-270,-310],
+  [320,320,290,220,195,180,90,50,0,-90,-105,-180,-210,-260,-320,-370,-405],
+  [290,220,190,110,60,20,-50,-90,-110,-190,-210,-260,-320,-400,-420,-490,-590],
+  [190,110,90,0,-20,-100,-150,-200,-220,-300,-320,-400,-405,-480,-500,-550,-600],
+  [30,0,-70,-100,-170,-190,-250,-300,-370,-400,-450,-500,-505,-550,-600,-600,-650],
+  [-100,-110,-190,-210,-270,-310,-350,-390,-400,-420,-450,-500,-505,-550,-600,-600,-650],
+];
+const VZ_6000_FAS = [
+  [100,100,100,100,100,100,100,100,95,80,50,5,-20,-100,-160,-190,-205],
+  [100,100,100,100,100,100,100,70,50,30,0,-50,-100,-160,-200,-260,-300],
+  [100,100,100,100,100,100,100,40,0,-40,-100,-120,-190,-205,-280,-320,-370],
+  [100,100,100,100,100,80,20,-5,-80,-100,-180,-200,-230,-305,-370,-400,-430],
+  [100,100,100,70,30,0,-60,-100,-150,-190,-220,-300,-350,-400,-430,-505,-570],
+  [100,70,20,0,-60,-100,-150,-200,-210,-300,-330,-400,-420,-490,-530,-605,-660],
+  [30,-20,-80,-105,-170,-200,-250,-310,-350,-400,-450,-500,-570,-605,-670,-700,-780],
+  [-80,-105,-180,-200,-250,-300,-380,-405,-450,-500,-570,-600,-630,-690,-710,-790,-820],
+  [-180,-210,-300,-310,-390,-405,-480,-510,-580,-605,-640,-700,-720,-760,-800,-820,-860],
+  [-300,-350,-400,-450,-500,-530,-580,-600,-605,-630,-640,-700,-720,-760,-800,-820,-860],
+];
+const VZ_6300_FAS = [
+  [50,50,50,30,20,10,0,0,0,-10,-30,-70,-110,-180,-210,-280,-310],
+  [50,50,50,20,10,0,0,-20,-50,-70,-100,-150,-190,-220,-300,-350,-400],
+  [40,40,40,10,0,0,-10,-40,-90,-130,-190,-205,-230,-300,-360,-405,-460],
+  [40,20,20,0,-10,-40,-60,-110,-160,-200,-230,-300,-330,-400,-450,-500,-550],
+  [10,10,10,-10,-40,-70,-140,-180,-220,-240,-330,-390,-420,-490,-530,-600,-650],
+  [0,-20,-30,-100,-170,-190,-240,-290,-340,-390,-410,-480,-530,-590,-620,-700,-750],
+  [-40,-100,-150,-190,-240,-290,-340,-390,-440,-495,-560,-590,-610,-695,-720,-800,-860],
+  [-150,-190,-220,-300,-350,-400,-460,-510,-570,-600,-650,-700,-710,-780,-800,-850,-900],
+  [-250,-300,-370,-400,-450,-510,-570,-610,-660,-700,-730,-790,-800,-830,-840,-900,-920],
+  [-380,-410,-480,-520,-580,-610,-640,-670,-690,-710,-730,-790,-800,-830,-840,-900,-920],
+];
+
+const HV_FAS = [
+  {masse:5500,vmax:3,hmax:140,hmin:121},
+  {masse:5700,vmax:12,hmax:174,hmin:60},
+  {masse:5900,vmax:16,hmax:210,hmin:41},
+  {masse:6100,vmax:21,hmax:244,hmin:30},
+  {masse:6300,vmax:29,hmax:276,hmin:17},
+  {masse:6600,vmax:34,hmax:320,hmin:13},
+];
+
+// ── État FAS ──
+let fasMode = false;
+try { fasMode = localStorage.getItem('fas_mode') === 'true'; } catch(e) {}
+function setFasMode(val){
+  fasMode = !!val;
+  document.getElementById('fas_off').classList.toggle('active', !fasMode);
+  document.getElementById('fas_on').classList.toggle('active', fasMode);
+  document.body.classList.toggle('fas-active', fasMode);
+  try { localStorage.setItem('fas_mode', fasMode); } catch(e) {}
+  calcPerfo();
+}
 
 function lookupVZ(table, alti_arr, temp, alti) {
   if(isHorsDomaine(temp, alti)) return null;
@@ -860,6 +995,11 @@ function lookupVZ(table, alti_arr, temp, alti) {
 function calcVZ(masse, temp, alti) {
   if(isHorsDomaine(temp, alti)) return null;
   // Pas d'interpolation en masse — valeurs conservatives par bloc
+  if(fasMode) {
+    if(masse <= 5800) return lookupVZ(VZ_5500_FAS, VZ_ALTI_FAS, temp, alti);
+    if(masse <= 6400) return lookupVZ(VZ_6000_FAS, VZ_ALTI_FAS, temp, alti);
+    return lookupVZ(VZ_6300_FAS, VZ_ALTI_FAS, temp, alti);
+  }
   if(masse <= 5800) return lookupVZ(VZ_5500, VZ_ALTI_5500, temp, alti);  // bloc 5200–5800 kg
   if(masse <= 6400) return lookupVZ(VZ_6000, VZ_ALTI_6000, temp, alti);  // bloc 5800–6400 kg
   return lookupVZ(VZ_6300, VZ_ALTI_6300, temp, alti);                     // bloc 6400–6600 kg
@@ -879,10 +1019,11 @@ const HV=[
   {masse:6500,vmax:32,hmax:300,hmin:14},{masse:6600,vmax:34,hmax:315,hmin:13},
 ];
 function interpHV(m){
-  if(m<=HV[0].masse)return{...HV[0]};
-  if(m>=HV[HV.length-1].masse)return{...HV[HV.length-1]};
-  for(let i=0;i<HV.length;i++){if(m<=HV[i].masse)return{...HV[i]};}
-  return{...HV[HV.length-1]};
+  const tbl = fasMode ? HV_FAS : HV;
+  if(m<=tbl[0].masse)return{...tbl[0]};
+  if(m>=tbl[tbl.length-1].masse)return{...tbl[tbl.length-1]};
+  for(let i=0;i<tbl.length;i++){if(m<=tbl[i].masse)return{...tbl[i]};}
+  return{...tbl[tbl.length-1]};
 }
 function updatePylon(s){
   const sel=document.getElementById('emport_'+s).value;
@@ -936,14 +1077,17 @@ function calcPerfo(){
   // Performances masse max
   const temp = parseFloat(document.getElementById('p_temp').value) || 20;
   const alti = parseFloat(document.getElementById('p_alti').value) || 0;
-  updatePerfoResult('p_des_val','p_des_badge', lookupPerf(PERF_DES,temp,alti), mt_val);
-  updatePerfoResult('p_hes_val','p_hes_badge', lookupPerf(PERF_HES,temp,alti), mt_val);
+  const hesTbl = fasMode ? PERF_HES_FAS : PERF_HES;
+  const desTbl = fasMode ? PERF_DES_FAS : PERF_DES;
+  updatePerfoResult('p_des_val','p_des_badge', lookupPerf(desTbl,temp,alti), mt_val);
+  updatePerfoResult('p_hes_val','p_hes_badge', lookupPerf(hesTbl,temp,alti), mt_val);
 
   // VZ OEI à l'alti saisie
   const vz = calcVZ(mt_val, temp, alti);
   const vzEl = document.getElementById('vz_val');
   const blocLabel = mt_val <= 5800 ? '5200–5800 kg' : mt_val <= 6400 ? '5800–6400 kg' : '6400–6600 kg';
-  document.getElementById('vz_bloc_label').textContent = `valeurs conservatives du bloc ${blocLabel}`;
+  const fasTag = fasMode ? ' · FAS' : '';
+  document.getElementById('vz_bloc_label').textContent = `valeurs conservatives du bloc ${blocLabel}${fasTag}`;
   if(vz === null) {
     vzEl.textContent = 'Hors domaine';
     vzEl.style.color = 'var(--red)';
@@ -976,9 +1120,15 @@ function calcPerfo(){
 function findAltiVZ50(masse, temp) {
   // Sélection du bloc conservatif
   let table, alti_arr;
-  if(masse <= 5800)      { table = VZ_5500; alti_arr = VZ_ALTI_5500; }
-  else if(masse <= 6400) { table = VZ_6000; alti_arr = VZ_ALTI_6000; }
-  else                   { table = VZ_6300; alti_arr = VZ_ALTI_6300; }
+  if(fasMode) {
+    if(masse <= 5800)      { table = VZ_5500_FAS; alti_arr = VZ_ALTI_FAS; }
+    else if(masse <= 6400) { table = VZ_6000_FAS; alti_arr = VZ_ALTI_FAS; }
+    else                   { table = VZ_6300_FAS; alti_arr = VZ_ALTI_FAS; }
+  } else {
+    if(masse <= 5800)      { table = VZ_5500; alti_arr = VZ_ALTI_5500; }
+    else if(masse <= 6400) { table = VZ_6000; alti_arr = VZ_ALTI_6000; }
+    else                   { table = VZ_6300; alti_arr = VZ_ALTI_6300; }
+  }
 
   function vzAtAlti(ai) {
     const t = Math.max(VZ_TEMP[0], Math.min(VZ_TEMP[VZ_TEMP.length-1], temp));
@@ -1198,6 +1348,10 @@ function buildCoordRefTable(){
 buildCoordRefTable();
 
 updatePylon('or');updatePylon('ir');updatePylon('il');updatePylon('ol');
+// Restaurer état toggle FAS
+document.getElementById('fas_off').classList.toggle('active', !fasMode);
+document.getElementById('fas_on').classList.toggle('active', fasMode);
+document.body.classList.toggle('fas-active', fasMode);
 calcPerfo();calc();calcRange();calcOnStation();
 checkWarnings();
 </script>
